@@ -1,5 +1,5 @@
 # FileSort
-Windows tool for sorting alphabetically all the files inside a folder based on its structure. Download latest version ![here](/Build/)
+Windows tool for sorting alphabetically all the files inside a folder based on its structure. Download latest version [here](/Build/)
 
 Media players - including in-car entertainment systems, like newer versions of the BMW iDrive - handle music collections in a simple way. Everything is mixed together and presented alphabetically, if no filter like artist or genre is applied. This makes listening to music hard:
 
