@@ -53,7 +53,7 @@ namespace FileSort
 
                 try
                 {
-                    await Model.FindAllFilesAsync(token);
+                    await Task.Run(() => Model.FindAllFiles(token));
                 }
                 catch (OperationCanceledException)
                 {
@@ -84,7 +84,7 @@ namespace FileSort
                         {
                             try
                             {
-                                await Model.SortItem(item);
+                                await Task.Run(() => Model.SortItem(item));
 
                                 Model.Status = $"{++currentItem}/{Model.Items.Length}";
                                 progressPercent = 100 * currentItem / Model.Items.Length;
