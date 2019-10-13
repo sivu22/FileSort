@@ -43,45 +43,31 @@ namespace FileSort
             var sortFolder = Settings.SourcePath + "\\FileSort";
             if (Directory.Exists(sortFolder)) return;
 
-            try
-            {
-                Directory.CreateDirectory(sortFolder);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Directory.CreateDirectory(sortFolder);
         }
 
         public void FindAllFiles(CancellationToken? token = null)
         {
             var items = new List<Item>();
 
-            try
+            var files = Directory.EnumerateFiles(Settings.SourcePath, "*.*", SearchOption.AllDirectories);
+            token?.ThrowIfCancellationRequested();
+
+            Item item = new Item();
+            UInt32 index = 0;
+            int namePos = 0;
+            var formatSpecifier = "D" + files.Count().ToString().Length;
+            foreach (string file in files)
             {
-                var files = Directory.EnumerateFiles(Settings.SourcePath, "*.*", SearchOption.AllDirectories);
+                item.Index = index++.ToString(formatSpecifier);
+                namePos = file.LastIndexOf("\\");
+                item.Path = file.Substring(0, namePos + 1);
+                item.Name = file.Substring(namePos + 1);
+
+                items.Add(item);
                 token?.ThrowIfCancellationRequested();
-
-                Item item = new Item();
-                UInt32 index = 0;
-                int namePos = 0;
-                var formatSpecifier = "D" + files.Count().ToString().Length;
-                foreach (string file in files)
-                {
-                    item.Index = index++.ToString(formatSpecifier);
-                    namePos = file.LastIndexOf("\\");
-                    item.Path = file.Substring(0, namePos + 1);
-                    item.Name = file.Substring(namePos + 1);
-
-                    items.Add(item);
-                    token?.ThrowIfCancellationRequested();
-                }
             }
-            catch (Exception)
-            {
-                throw;
-            }
-
+            
             Items = items.ToArray();
             App.Current.Dispatcher.Invoke((Action)delegate
             {
@@ -98,22 +84,15 @@ namespace FileSort
             else
                 newFile = String.Format("{0}\\FileSort\\{1}_{2}", Settings.SourcePath, item.Index, item.Name);
 
-            try
-            {
-                if (Settings.SortMode == OutputMode.RenameOriginalFile)
-                    Directory.Move(currentFile, newFile);
-                else
-                    File.Copy(currentFile, newFile, true);
+            if (Settings.SortMode == OutputMode.RenameOriginalFile)
+                Directory.Move(currentFile, newFile);
+            else
+                File.Copy(currentFile, newFile, true);
 
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    SortedItems.Add(item);
-                });
-            }
-            catch (Exception)
+            App.Current.Dispatcher.Invoke((Action)delegate
             {
-                throw;
-            }
+                SortedItems.Add(item);
+            });
         }
     }
 }
